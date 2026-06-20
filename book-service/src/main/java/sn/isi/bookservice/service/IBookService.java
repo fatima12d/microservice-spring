@@ -1,6 +1,8 @@
 package sn.isi.bookservice.service;
 
 import sn.isi.bookservice.dtos.BookDTO;
+import sn.isi.bookservice.dtos.MemberDTO;
+
 import java.util.List;
 
 public interface IBookService {
@@ -11,4 +13,6 @@ public interface IBookService {
     List<BookDTO> getAll();
     List<BookDTO> getAvailable();
     List<BookDTO> getByAuthor(String auteur);
+
+    MemberDTO getMemberbyID(Integer id);
 }

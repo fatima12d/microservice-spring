@@ -2,9 +2,15 @@ package sn.isi.bookservice.service;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.MediaType;
 import org.springframework.stereotype.Service;
+import org.springframework.web.client.RestClient;
+import org.springframework.web.client.RestTemplate;
 import sn.isi.bookservice.Exception.BookNotFoundException;
+import sn.isi.bookservice.Exception.InvalidBookPriceException;
+import sn.isi.bookservice.client.MemberClient;
 import sn.isi.bookservice.dtos.BookDTO;
+import sn.isi.bookservice.dtos.MemberDTO;
 import sn.isi.bookservice.entity.Book;
 import sn.isi.bookservice.mapper.BookMapper;
 import sn.isi.bookservice.repository.BookRepository;
@@ -18,10 +24,15 @@ import java.util.Optional;
 public class BookServiceImpl implements IBookService {
 
     private final BookRepository bookRepository;
+//    private final MemberClient  memberClient;
+    private final RestClient restClient;
 
     @Override
     public BookDTO save(BookDTO book) {
         log.info("Start create book  services {}", book);
+        if (book.getPrix()>1000) throw new InvalidBookPriceException(
+                "le prix ne peut pas depasser 1000 EUR"
+        );
         return BookMapper.toDTO(bookRepository.save(BookMapper.toEntity(book)));
     }
 
@@ -63,4 +74,25 @@ public class BookServiceImpl implements IBookService {
                 .map(BookMapper::toDTO)
                 .toList();
     }
+
+    @Override
+    public MemberDTO getMemberbyID(Integer id) {
+        //COMMUNICTAION AVEC RestTemplate
+    //        RestTemplate restTemplate = new RestTemplate();
+    //
+    //        MemberDTO memberDTO = restTemplate.getForObject(
+    //                "http://localhost:8082/api/members/" + id,
+    //                MemberDTO.class
+    //        );
+        //COMMUNICATION VIA OPENFEIGN
+          // return memberClient.getMember(id).getBody();
+        // COMMUNICATION VIA RESTCLIENT
+        MemberDTO memberDTO = restClient.get().uri("/api/members/{id}" , id)
+                .retrieve()
+                .body(MemberDTO.class);
+        return memberDTO;
+    }
+
+
+
 }

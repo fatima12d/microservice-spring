@@ -1,9 +1,8 @@
-
 spring:
   application:
-    name: member-service
+    name: loan-service
   datasource:
-    url: jdbc:postgresql://localhost:5432/member_db
+    url: jdbc:postgresql://localhost:5432/loan_db
     username: postgres
     password: passer
     driver-class-name: org.postgresql.Driver
@@ -17,9 +16,9 @@ spring:
       hibernate:
         dialect: org.hibernate.dialect.PostgreSQLDialect
         format_sql: true
-
 server:
-  port: 8082
+  port: 8083
+
 springdoc:
   swagger-ui:
     path: /swagger-ui.html
@@ -33,3 +32,10 @@ eureka:
   instance:
     prefer-ip-address: true
     instance-id: ${spring.application.name}:${random.uuid}
+feign:
+  client:
+    config:
+      default:
+        connect-timeout: 5000
+        read-timeout: 5000
+        logger-level: BASIC

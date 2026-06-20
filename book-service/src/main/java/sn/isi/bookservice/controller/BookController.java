@@ -6,6 +6,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import sn.isi.bookservice.dtos.BookDTO;
+import sn.isi.bookservice.dtos.MemberDTO;
 import sn.isi.bookservice.service.IBookService;
 
 import java.util.List;
@@ -44,5 +45,9 @@ public class BookController {
     @GetMapping("/by-author/{auteur}")
     public ResponseEntity<List<BookDTO>> getByAuthor(@PathVariable String auteur) {
         return ResponseEntity.ok(bookService.getByAuthor(auteur));
+    }
+    @GetMapping("/byMember/{id}")
+    public ResponseEntity<MemberDTO> getByMember(@PathVariable Integer id) {
+        return ResponseEntity.ok(bookService.getMemberbyID(id));
     }
 }

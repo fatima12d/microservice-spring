@@ -24,4 +24,21 @@ public class GlobalExceptionHandler {
         error.put("message", ex.getMessage());
         return new ResponseEntity<>(error, HttpStatus.BAD_REQUEST);
     }
+
+    @ExceptionHandler(feign.FeignException.class)
+    public ResponseEntity<Map<String, String>> handleFeignException(feign.FeignException ex) {
+        Map<String, String> error = new HashMap<>();
+        error.put("message", "Erreur de communication avec le service externe.");
+        error.put("status", String.valueOf(ex.status()));
+        error.put("details", ex.getMessage());
+        
+        HttpStatus status = HttpStatus.INTERNAL_SERVER_ERROR;
+        if (ex.status() == 404) {
+            error.put("message", "Le membre recherché n'existe pas dans le service membre.");
+            status = HttpStatus.NOT_FOUND;
+        } else if (ex.status() > 0) {
+            status = HttpStatus.resolve(ex.status()) != null ? HttpStatus.resolve(ex.status()) : HttpStatus.INTERNAL_SERVER_ERROR;
+        }
+        return new ResponseEntity<>(error, status);
+    }
 }
